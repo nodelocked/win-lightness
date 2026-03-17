@@ -1,0 +1,42 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Build
+        shell: powershell
+        run: |
+          cl /EHsc /O2 /DNDEBUG /DUNICODE /D_UNICODE brightness_edge.cpp `
+            /link /SUBSYSTEM:WINDOWS /OUT:brightness_edge.exe dxva2.lib user32.lib
+
+      - name: Package
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item brightness_edge.exe dist\
+          Copy-Item README.md dist\
+          $zip = "brightness_edge-${{ github.ref_name }}-win64.zip"
+          if (Test-Path $zip) { Remove-Item $zip }
+          Compress-Archive -Path dist\* -DestinationPath $zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: brightness_edge-${{ github.ref_name }}-win64.zip
