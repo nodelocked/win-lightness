@@ -6,15 +6,15 @@
 typedef struct _PHYSICAL_MONITOR {
     HANDLE hPhysicalMonitor;
     WCHAR szPhysicalMonitorDescription[128];
-} PHYSICAL_MONITOR;
+} PHYSICAL_MONITOR, *LPPHYSICAL_MONITOR;
 
 extern "C" {
 __declspec(dllimport) BOOL __stdcall GetNumberOfPhysicalMonitorsFromHMONITOR(
     HMONITOR hMonitor, LPDWORD pdwNumberOfPhysicalMonitors);
 __declspec(dllimport) BOOL __stdcall GetPhysicalMonitorsFromHMONITOR(
-    HMONITOR hMonitor, DWORD dwPhysicalMonitorArraySize, LPPHYSICAL_MONITOR pPhysicalMonitorArray);
+    HMONITOR hMonitor, DWORD dwPhysicalMonitorArraySize, PHYSICAL_MONITOR* pPhysicalMonitorArray);
 __declspec(dllimport) BOOL __stdcall DestroyPhysicalMonitors(
-    DWORD dwPhysicalMonitorArraySize, LPPHYSICAL_MONITOR pPhysicalMonitorArray);
+    DWORD dwPhysicalMonitorArraySize, PHYSICAL_MONITOR* pPhysicalMonitorArray);
 __declspec(dllimport) BOOL __stdcall GetVCPFeatureAndVCPFeatureReply(
     HANDLE hMonitor, BYTE bVCPCode, LPDWORD pvct, LPDWORD pdwCurrentValue, LPDWORD pdwMaximumValue);
 __declspec(dllimport) BOOL __stdcall SetVCPFeature(
